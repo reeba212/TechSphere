@@ -1,4 +1,4 @@
-import { Label, TextInput, Button } from 'flowbite-react';
+import { Label, Button } from 'flowbite-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -27,23 +27,46 @@ export default function SignUp() {
         <div className='flex-1'>
           <form className='flex flex-col gap-6 bg-white p-6 rounded-lg shadow-lg'>
             <div>
-              <Label className='text-lg font-semibold text-gray-700' value='Your Username'/>
-              <TextInput type='text' placeholder='Username' id='username'/>
-              </div>
-            <div>
-              <Label className='text-lg font-semibold text-gray-700' value='Your Email'/>
-              <TextInput type='email' placeholder='name@company.com' id='email'/>
+              <Label className='text-lg font-semibold text-gray-700' htmlFor='username'>
+                Your Username
+              </Label>
+              <input
+                type='text'
+                placeholder='Username'
+                id='username'
+                className='focus:outline-none w-full border border-gray-300 rounded-lg focus:ring-0 focus:border-purple-500 text-sm px-4 py-3 mt-1'
+              />
             </div>
             <div>
-              <Label className='text-lg font-semibold text-gray-700' value='Your Password'/>
-              <TextInput type='password' placeholder='Password' id='password'/>
+              <Label className='text-lg font-semibold text-gray-700' htmlFor='email'>
+                Your Email
+              </Label>
+              <input
+                type='email'
+                placeholder='name@company.com'
+                id='email'
+                className='focus:outline-none w-full border border-gray-300 rounded-lg focus:ring-0 focus:border-purple-500 text-sm px-4 py-3 mt-1'
+              />
+            </div>
+            <div>
+              <Label className='text-lg font-semibold text-gray-700' htmlFor='password'>
+                Your Password
+              </Label>
+              <input
+                type='password'
+                placeholder='Password'
+                id='password'
+                className='focus:outline-none w-full border border-gray-300 rounded-lg focus:ring-0 focus:border-purple-500 text-sm px-4 py-3 mt-1'
+              />
             </div>
             <Button
               type='submit'
-              className='w-full text-white font-bold py-1 px-2 rounded-lg transition-all bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'>
+              className='w-full text-white font-bold py-1 px-2 rounded-lg transition-all bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
+            >
               Sign Up
             </Button>
           </form>
+
           <div className='flex gap-2 text-sm mt-5'>
             <span>
               Have an account?
