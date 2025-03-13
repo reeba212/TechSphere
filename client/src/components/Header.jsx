@@ -1,14 +1,17 @@
-import React from 'react';
-import { Navbar, TextInput, Button } from 'flowbite-react';  
+import React, { useState } from 'react';
+import { Navbar, TextInput, Button } from 'flowbite-react';
 import { Link, useLocation } from 'react-router-dom';
-import { AiOutlineSearch } from 'react-icons/ai';
+import { AiOutlineSearch, AiOutlineMenu, AiOutlineClose } from 'react-icons/ai';
 import { FaMoon } from 'react-icons/fa';
 
 export default function Header() {
     const path = useLocation().pathname;
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    const toggleMenu = () => setMenuOpen(!menuOpen);
 
     return (
-        <Navbar className='border-b-2 pb-2 pl-2 pr-2 justify-between items-center'>
+        <Navbar className='border-b-2 pb-2 pl-2 pr-2 justify-between items-center relative'>
             <Link to="/" className='self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white'>
                 <span className='px-3 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>TechSphere</span>
             </Link>
@@ -25,32 +28,21 @@ export default function Header() {
             <Button className='w-12 h-10 lg:hidden inline text-gray-500 hover:bg-black hover:text-white transition duration-300 ease-in-out'>
                 <AiOutlineSearch />
             </Button>
-            
-            <Navbar.Collapse className='md:flex inline'>
-                <Navbar.Link 
-                    className={`mx-3 ${path === "/" ? "bg-indigo-500 text-white px-4 py-2 rounded" : "text-indigo-500 hover:bg-indigo-500 hover:text-white px-4 py-2 rounded transition duration-300 ease-in-out"}`} 
-                    as={Link} 
-                    to='/'
-                >
-                    Home
-                </Navbar.Link>
-                <Navbar.Link 
-                    className={`mx-3 ${path === "/about" ? "bg-indigo-500 text-white px-4 py-2 rounded" : "text-indigo-500 hover:bg-indigo-500 hover:text-white px-4 py-2 rounded transition duration-300 ease-in-out"}`} 
-                    as={Link} 
-                    to='/about'
-                >
-                    About
-                </Navbar.Link>
-                <Navbar.Link 
-                    className={`mx-3 ${path === "/projects" ? "bg-indigo-500 text-white px-4 py-2 rounded" : "text-indigo-500 hover:bg-indigo-500 hover:text-white px-4 py-2 rounded transition duration-300 ease-in-out"}`} 
-                    as={Link} 
-                    to='/projects'
-                >
-                    Projects
-                </Navbar.Link>
+
+            <Navbar.Collapse className='hidden md:flex'>
+                {['/', '/about', '/projects'].map((route, index) => (
+                    <Navbar.Link
+                        key={index}
+                        className={`mx-3 ${path === route ? "bg-indigo-500 text-white px-4 py-2 rounded" : "text-indigo-500 hover:bg-indigo-500 hover:text-white px-4 py-2 rounded transition duration-300 ease-in-out"}`}
+                        as={Link}
+                        to={route}
+                    >
+                        {route === '/' ? 'Home' : route.slice(1).charAt(0).toUpperCase() + route.slice(2)}
+                    </Navbar.Link>
+                ))}
             </Navbar.Collapse>
 
-            <div className='flex items-center gap-2'> 
+           <div className='flex items-center gap-2 md:order-2'>
                 <Button className='w-12 h-10 hidden sm:inline text-gray-500 hover:bg-black hover:text-white transition duration-300 ease-in-out'>
                     <FaMoon />
                 </Button>
@@ -59,7 +51,29 @@ export default function Header() {
                         Sign In
                     </Button>
                 </Link>
+
+                <Button
+                    className='w-12 h-10 md:hidden inline text-gray-500 hover:bg-black hover:text-white transition duration-300 ease-in-out'
+                    onClick={toggleMenu}
+                >
+                    {menuOpen ? <AiOutlineClose /> : <AiOutlineMenu />}
+                </Button>
             </div>
+
+            {menuOpen && (
+                <div className='fixed top-16 right-2 bg-black bg-opacity-80 flex flex-col items-center p-4 rounded-lg z-50'>
+                    {['/', '/about', '/projects'].map((route, index) => (
+                        <Link
+                            key={index}
+                            to={route}
+                            className='text-white text-lg py-1 hover:text-indigo-300'
+                            onClick={toggleMenu}
+                        >
+                            {route === '/' ? 'Home' : route.slice(1).charAt(0).toUpperCase() + route.slice(2)}
+                        </Link>
+                    ))}
+                </div>
+            )}
         </Navbar>
     );
 }
