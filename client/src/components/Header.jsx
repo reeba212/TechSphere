@@ -16,11 +16,11 @@ export default function Header() {
                 <span className='px-3 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>TechSphere</span>
             </Link>
 
-            <form className="relative hidden lg:inline-block">
-                <TextInput
+            <form className="relative hidden lg:inline-block lg:ml-4">
+                <input
                     type='text'
                     placeholder='Search...'
-                    className='hidden lg:inline'
+                    className='hidden lg:inline w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-purple-500 text-sm px-4 py-2'
                 />
                 <AiOutlineSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
             </form>
