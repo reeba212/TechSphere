@@ -1,8 +1,51 @@
 import { Label, Button } from 'flowbite-react';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function SignUp() {
+  const [formData, setFormData] = useState({});
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value.trim()});
+  };
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.username || !formData.email || !formData.password) {
+      return setErrorMessage('Please fill out all fields!');
+    }
+  
+    try {
+      setLoading(true);
+      setErrorMessage(null);
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+  
+      const data = await res.json(); 
+  
+      if (!res.ok) {
+        console.log(data.message);
+        return setErrorMessage(data.message || 'Something went wrong');
+      }
+      setLoading(false);
+      if(res.ok){
+        navigate('/sign-in');
+      }
+    } 
+    catch (error) {
+      setLoading(false);
+      setErrorMessage(error.message);
+    }
+  }
+  
+
   return (
     <div className='min-h-screen mt-20'>
       <div className='flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5'>
@@ -25,7 +68,7 @@ export default function SignUp() {
 
         {/* Right Side */}
         <div className='flex-1'>
-          <form className='flex flex-col gap-6 bg-white p-6 rounded-lg shadow-lg'>
+          <form className='flex flex-col gap-6 bg-white p-6 rounded-lg shadow-lg' onSubmit={handleSubmit}>
             <div>
               <Label className='text-lg font-semibold text-gray-700' htmlFor='username'>
                 Your Username
@@ -35,6 +78,7 @@ export default function SignUp() {
                 placeholder='Username'
                 id='username'
                 className='focus:outline-none w-full border border-gray-300 rounded-lg focus:ring-0 focus:border-purple-500 text-sm px-4 py-3 mt-1'
+                onChange={handleChange}
               />
             </div>
             <div>
@@ -46,6 +90,7 @@ export default function SignUp() {
                 placeholder='name@company.com'
                 id='email'
                 className='focus:outline-none w-full border border-gray-300 rounded-lg focus:ring-0 focus:border-purple-500 text-sm px-4 py-3 mt-1'
+                onChange={handleChange}
               />
             </div>
             <div>
@@ -57,13 +102,22 @@ export default function SignUp() {
                 placeholder='Password'
                 id='password'
                 className='focus:outline-none w-full border border-gray-300 rounded-lg focus:ring-0 focus:border-purple-500 text-sm px-4 py-3 mt-1'
+                onChange={handleChange}
               />
             </div>
             <Button
               type='submit'
               className='w-full text-white font-bold py-1 px-2 rounded-lg transition-all bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
+              disabled={loading}
             >
-              Sign Up
+              {
+              loading ? (
+                <>
+                <div className="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></div>
+                <span className='pl-3'>Loading...</span>
+                </>
+              ) : 'Sign Up' 
+            }
             </Button>
           </form>
 
@@ -75,6 +129,14 @@ export default function SignUp() {
               Sign In
             </Link>
           </div>
+          {
+            errorMessage && (
+              <div className="mt-5 p-4 text-sm text-red-700 bg-red-100 rounded-lg border border-red-400" role="alert">
+                {errorMessage}
+              </div>
+            )
+          }
+
         </div>
       </div>
     </div>
