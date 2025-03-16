@@ -4,12 +4,10 @@ import persistReducer from 'redux-persist/es/persistReducer';
 import storage from 'redux-persist/lib/storage';
 import persistStore from 'redux-persist/es/persistStore';
 
-// Corrected combineReducers syntax
 const rootReducer = combineReducers({
   user: userReducer,
 });
 
-// Corrected persistConfig key
 const persistConfig = {
   key: 'root',
   storage,
@@ -24,7 +22,7 @@ export const store = configureStore({
     getDefaultMiddleware({ serializableCheck: false }),
 });
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
+// Define types for TypeScript
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
