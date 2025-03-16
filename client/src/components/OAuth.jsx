@@ -40,13 +40,13 @@ export default function OAuth() {
   return (
     <button
       type='button'
-      className='w-full flex items-center justify-center font-bold py-2 px-4 rounded-lg transition-all bg-white border-2 border-transparent hover:bg-gradient-to-r hover:from-pink-500 hover:to-orange-500'
+      className='w-full flex items-center justify-center font-bold py-2 px-4 rounded-lg transition-all bg-[#1A1A1A] hover:border-white hover:bg-gradient-to-r hover:from-pink-600 hover:to-orange-600 text-white'
       style={{
-        boxShadow: '0 0 0 1.5px #ec4899, 0 0 0 3px #f97316',
+        boxShadow: '0 0 0 , 0 0 0 3px #ec4899', 
       }}
       onClick={handleGoogleClick}
     >
-      <AiFillGoogleCircle className='w-6 h-6 mr-2' />
+      <AiFillGoogleCircle className='w-6 h-6 mr-2 text-white' />
       Continue with Google
     </button>
   );
