@@ -29,7 +29,7 @@ export default function Header() {
                 <AiOutlineSearch />
             </Button>
 
-            <Navbar.Collapse className='hidden md:flex'>
+            <Navbar.Collapse className='hidden md:flex pb-3'>
                 {['/', '/about', '/projects'].map((route, index) => (
                     <Navbar.Link
                         key={index}
