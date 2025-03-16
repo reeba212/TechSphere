@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Navbar, TextInput, Button } from 'flowbite-react';
+import { Navbar, TextInput, Button, Dropdown, Avatar } from 'flowbite-react';
 import { Link, useLocation } from 'react-router-dom';
 import { AiOutlineSearch, AiOutlineMenu, AiOutlineClose } from 'react-icons/ai';
 import { FaMoon } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 
 export default function Header() {
     const path = useLocation().pathname;
+    const { currentUser } = useSelector(state => state.user);
     const [menuOpen, setMenuOpen] = useState(false);
 
     const toggleMenu = () => setMenuOpen(!menuOpen);
@@ -29,7 +31,7 @@ export default function Header() {
                 <AiOutlineSearch />
             </Button>
 
-            <Navbar.Collapse className='hidden md:flex pb-3'>
+            <Navbar.Collapse className='hidden md:flex items-start pb-3'>
                 {['/', '/about', '/projects'].map((route, index) => (
                     <Navbar.Link
                         key={index}
@@ -42,15 +44,45 @@ export default function Header() {
                 ))}
             </Navbar.Collapse>
 
-           <div className='flex items-center gap-2 md:order-2'>
+            <div className='flex items-center gap-2 md:order-2'>
                 <Button className='w-12 h-10 hidden sm:inline text-gray-500 hover:bg-black hover:text-white transition duration-300 ease-in-out'>
                     <FaMoon />
                 </Button>
-                <Link to='/sign-in'>
-                    <Button className='text-indigo-500 border border-indigo-500 rounded-lg w-20 h-10 justify-center items-center transition duration-300 ease-in-out hover:bg-gradient-to-r hover:from-indigo-500 hover:via-blue-500 hover:to-blue-400 hover:text-white'>
-                        Sign In
-                    </Button>
-                </Link>
+                {currentUser ? (
+                    <Dropdown
+                        arrowIcon={false}
+                        inline
+                        label={
+                            <Avatar
+                                alt='user'
+                                img={currentUser.profilePicture || '/default-avatar.png'}
+                                rounded
+                                className='w-10 h-10 object-cover aspect-square cursor-pointer hover:shadow-lg transition duration-300 ease-in-out'
+                            />
+                        }
+                        className="bg-white border border-gray-200 rounded-lg shadow-lg w-48 dark:bg-gray-800 dark:border-gray-700"
+                    >
+                        <Dropdown.Header className="px-4 py-3 bg-gray-100 dark:bg-gray-700">
+                            <span className='block text-sm font-semibold text-gray-700 dark:text-gray-200'>
+                                @{currentUser.username}
+                            </span>
+                            <span className='block text-sm text-gray-500 dark:text-gray-400 truncate'>
+                                @{currentUser.email}
+                            </span>
+                        </Dropdown.Header>
+                        <Link to={'/dashboard?tab=profile'}>
+                            <Dropdown.Item className="px-4 py-2 hover:bg-indigo-100 dark:hover:bg-indigo-600 transition duration-300">Profile</Dropdown.Item>
+                        </Link>
+                        <Dropdown.Divider />
+                        <Dropdown.Item className="px-4 py-2 hover:bg-indigo-100 dark:hover:bg-indigo-600 transition duration-300">Sign Out</Dropdown.Item>
+                    </Dropdown>
+                ) : (
+                    <Link to='/sign-in'>
+                        <Button className='text-indigo-500 border border-indigo-500 rounded-lg w-20 h-10 justify-center items-center transition duration-300 ease-in-out hover:bg-gradient-to-r hover:from-indigo-500 hover:via-blue-500 hover:to-blue-400 hover:text-white'>
+                            Sign In
+                        </Button>
+                    </Link>
+                )}
 
                 <Button
                     className='w-12 h-10 md:hidden inline text-gray-500 hover:bg-black hover:text-white transition duration-300 ease-in-out'
