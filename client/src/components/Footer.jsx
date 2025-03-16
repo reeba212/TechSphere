@@ -5,7 +5,7 @@ import { FaGithub, FaLinkedin, FaTwitter, FaCode } from 'react-icons/fa';
 
 export default function FooterCom() {
   return (
-    <Footer container className='border border-t-8 border-purple-500 bg-[#0A0A0A] text-white'>
+    <Footer container className='border border-t-8 border-purple-500 bg-[#121212] text-white'>
         <div className='w-full max-w-7xl mx-auto'>
             <div className='grid w-full justify-between sm:flex md:grid-cols-1'>
                 <div className='mt-5'>
