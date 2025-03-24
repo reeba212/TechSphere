@@ -19,20 +19,21 @@ export default function DashSidebar() {
     <Sidebar className="h-full w-full md:w-56 bg-[#121212]">
       <Sidebar.Items>
         <Sidebar.ItemGroup>
-            <Link to='/dashboard?tab=profile'>
-                {/* Profile */}
-                <Sidebar.Item
-                    active={tab === 'profile'}
-                    icon={HiUser}
-                    label="User"
-                    labelColor="dark"
-                    className={`cursor-pointer text-white hover:text-gray-300 hover:bg-[#181818] transition-colors ${
-                    tab === 'profile' ? 'bg-[#202020]' : ''
-                    }`}
-                >
-                    Profile
-                </Sidebar.Item>
-            </Link>
+          {/* Profile */}
+          <Sidebar.Item
+            as={Link}
+            to="/dashboard?tab=profile"
+            active={tab === 'profile'}
+            icon={HiUser}
+            label="User"
+            labelColor="dark"
+            className={`cursor-pointer text-white hover:text-gray-300 hover:bg-[#181818] transition-colors ${
+              tab === 'profile' ? 'bg-[#202020]' : ''
+            }`}
+          >
+            Profile
+          </Sidebar.Item>
+
           {/* Sign Out */}
           <Sidebar.Item
             icon={HiArrowSmRight}
