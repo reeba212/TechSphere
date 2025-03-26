@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateStart, updateSuccess, updateFailure } from '../features/userSlice';
+import { updateStart, updateSuccess, updateFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure } from '../features/userSlice';
+import { Modal } from 'flowbite-react';
+import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
 export default function DashProfile() {
-  const { currentUser  } = useSelector(state => state.user);
+  const { currentUser, error } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
 
   const handleInputChange = (e) => {
@@ -17,35 +20,52 @@ export default function DashProfile() {
     e.preventDefault();
     setUpdateUserError(null);
     setUpdateUserSuccess(null);
+
     if (Object.keys(formData).length === 0) {
       setUpdateUserError('No changes made');
       return;
     }
+
     try {
       dispatch(updateStart());
-      const res = await fetch(`/api/user/update/${currentUser._id}`,{
+      const res = await fetch(`/api/user/update/${currentUser?._id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
       const data = await res.json();
+
       if (!res.ok) {
         dispatch(updateFailure(data.message));
         setUpdateUserError(data.message);
-      }
-      else {
+      } else {
         dispatch(updateSuccess(data));
-        setUpdateUserSuccess('Profile updated successfully!')
+        setUpdateUserSuccess('Profile updated successfully!');
       }
-    }
-    catch (error) {
-      dispatch(updateFailure(data.message));
-      setUpdateUserError(data.message);
+    } catch (error) {
+      dispatch(updateFailure(error.message));
+      setUpdateUserError(error.message);
     }
   };
-    
+
+  const handleDeleteUser = async () => {
+    setShowModal(false);
+    if (!currentUser) return;
+
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, { method: 'DELETE' });
+      const data = await res.json();
+
+      if (!res.ok) {
+        dispatch(deleteUserFailure(data.message));
+      } else {
+        dispatch(deleteUserSuccess());
+      }
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+    }
+  };
 
   return (
     <div className='max-w-lg mx-auto p-3 w-full'>
@@ -53,7 +73,7 @@ export default function DashProfile() {
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         <div className='w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full'>
           <img
-            src={currentUser .profilePicture}
+            src={currentUser?.profilePicture}
             alt='user'
             className='rounded-full w-full h-full border-8 border-[lightgray] object-cover'
           />
@@ -62,7 +82,7 @@ export default function DashProfile() {
           type='text'
           id='username'
           placeholder='Username'
-          defaultValue={currentUser.username}
+          defaultValue={currentUser?.username}
           onChange={handleInputChange}
           className='mt-3 p-2 bg-[#121212] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500'
           required
@@ -71,7 +91,7 @@ export default function DashProfile() {
           type='email'
           id='email'
           placeholder='Email'
-          defaultValue={currentUser.email}
+          defaultValue={currentUser?.email}
           onChange={handleInputChange}
           className='mt-3 p-2 bg-[#121212] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500'
           required
@@ -80,7 +100,6 @@ export default function DashProfile() {
           type='password'
           id='password'
           placeholder='Password (optional)'
-          defaultValue={currentUser.password}
           onChange={handleInputChange}
           className='mt-3 p-2 bg-[#121212] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500'
         />
@@ -88,40 +107,64 @@ export default function DashProfile() {
           Update
         </button>
       </form>
+
       <div className="flex justify-between items-center mt-6 space-x-6">
-        <span className="text-red-500 cursor-pointer hover:text-red-700 font-semibold transition-colors duration-200">Delete Account</span>
-        <span className="text-red-500 cursor-pointer hover:text-red-700 font-semibold transition-colors duration-200">Sign Out</span>
+        <span onClick={() => setShowModal(true)} className="text-red-500 cursor-pointer hover:text-red-700 font-semibold transition-colors duration-200">
+          Delete Account
+        </span>
+        <span className="text-red-500 cursor-pointer hover:text-red-700 font-semibold transition-colors duration-200">
+          Sign Out
+        </span>
       </div>
+
       {updateUserSuccess && (
-        <div
-          className="alert alert-success mt-5"
-          style={{
-            color: 'green',
-            backgroundColor: '#181818',
-            padding: '10px',
-            borderRadius: '5px',
-            border: '1px solid green',
-          }}
-        >
+        <div className="alert alert-success mt-5 text-green-500 bg-[#181818] p-2 rounded border border-green-500">
           {updateUserSuccess}
         </div>
       )}
 
       {updateUserError && (
-        <div
-          className="alert alert-failure mt-5"
-          style={{
-            color: 'red',
-            backgroundColor: '#181818',
-            padding: '10px',
-            borderRadius: '5px',
-            border: '1px solid red',
-          }}
-        >
+        <div className="alert alert-failure mt-5 text-red-500 bg-[#181818] p-2 rounded border border-red-500">
           {updateUserError}
         </div>
       )}
 
+      {error && error !== 'Unauthorized' && (
+        <div className="alert alert-failure mt-5 text-red-500 bg-[#181818] p-2 rounded border border-red-500">
+          {error}
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showModal && (
+        <Modal show={showModal} onClose={() => setShowModal(false)} popup size='md'>
+          <div className="bg-[#121212] rounded-lg p-6">
+            <Modal.Header />
+            <Modal.Body>
+              <div className='text-center'>
+                <HiOutlineExclamationCircle className='h-14 w-14 text-gray-200 mb-4 mx-auto' />
+                <h3 className='mb-5 text-lg text-gray-400'>
+                  Are you sure you want to delete your account?
+                </h3>
+                <div className='flex justify-center gap-4'>
+                  <button 
+                    onClick={handleDeleteUser} 
+                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+                  >
+                    Yes, I'm sure
+                  </button>
+                  <button 
+                    onClick={() => setShowModal(false)} 
+                    className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition"
+                  >
+                    No, cancel
+                  </button>
+                </div>
+              </div>
+            </Modal.Body>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
