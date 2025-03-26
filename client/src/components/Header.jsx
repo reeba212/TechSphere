@@ -1,16 +1,39 @@
 import React, { useState } from 'react';
 import { Navbar, Button, Dropdown, Avatar } from 'flowbite-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AiOutlineSearch, AiOutlineMenu, AiOutlineClose } from 'react-icons/ai';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { signoutSuccess } from '../features/userSlice';
 
 export default function Header() {
     const path = useLocation().pathname;
     const { currentUser } = useSelector(state => state.user);
     const [menuOpen, setMenuOpen] = useState(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const toggleMenu = () => setMenuOpen(!menuOpen);
 
+      /* Signing out */
+      const handleSignOut = async () => {
+        try {
+          const res = await fetch('/api/user/signout', {
+            method: 'POST',
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            console.log(data.message);
+          }
+          else {
+            dispatch(signoutSuccess());
+            navigate('/sign-in');
+          }
+        }
+        catch (error) {
+          console.log(error.message);
+        }
+      }
+    
     return (
         <Navbar className='border-b border-gray-800 px-6 py-4 flex justify-between items-center bg-[#121212] text-white'>
             {/* Logo */}
@@ -79,7 +102,7 @@ export default function Header() {
                             <Dropdown.Item className="px-4 py-2 hover:bg-indigo-600 transition">Profile</Dropdown.Item>
                         </Link>
                         <Dropdown.Divider />
-                        <Dropdown.Item className="px-4 py-2 hover:bg-red-600 transition">Sign Out</Dropdown.Item>
+                        <Dropdown.Item onClick={handleSignOut} className="px-4 py-2 hover:bg-red-600 transition">Sign Out</Dropdown.Item>
                     </Dropdown>
                 ) : (
                     <Link to='/sign-in'>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateStart, updateSuccess, updateFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure } from '../features/userSlice';
+import { updateStart, updateSuccess, updateFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure, signoutSuccess } from '../features/userSlice';
 import { Modal } from 'flowbite-react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
@@ -12,10 +12,12 @@ export default function DashProfile() {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
 
+  /* Handle input change */
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  /* Handle submit button click */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUpdateUserError(null);
@@ -48,6 +50,7 @@ export default function DashProfile() {
     }
   };
 
+  /* Deleting a user */
   const handleDeleteUser = async () => {
     setShowModal(false);
     if (!currentUser) return;
@@ -66,6 +69,25 @@ export default function DashProfile() {
       dispatch(deleteUserFailure(error.message));
     }
   };
+
+  /* Signing out */
+  const handleSignOut = async () => {
+    try {
+      const res = await fetch('/api/user/signout', {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      }
+      else {
+        dispatch(signoutSuccess());
+      }
+    }
+    catch (error) {
+      console.log(error.message);
+    }
+  }
 
   return (
     <div className='max-w-lg mx-auto p-3 w-full'>
@@ -112,7 +134,7 @@ export default function DashProfile() {
         <span onClick={() => setShowModal(true)} className="text-red-500 cursor-pointer hover:text-red-700 font-semibold transition-colors duration-200">
           Delete Account
         </span>
-        <span className="text-red-500 cursor-pointer hover:text-red-700 font-semibold transition-colors duration-200">
+        <span onClick={handleSignOut} className="text-red-500 cursor-pointer hover:text-red-700 font-semibold transition-colors duration-200">
           Sign Out
         </span>
       </div>
