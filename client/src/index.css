@@ -7,8 +7,17 @@ body {
     color: white;
   }
   
-  #root {
+#root {
     min-height: 100vh; 
     display: flex;
     flex-direction: column;
+  }
+
+  .ql-container {
+    min-height: 400px !important;
+  }
+  
+  .ql-editor {
+    min-height: 400px !important; 
+    font-size: 1.05rem !important;
   }
