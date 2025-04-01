@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateStart, updateSuccess, updateFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure, signoutSuccess } from '../features/userSlice';
 import { Modal } from 'flowbite-react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
+import { Link } from 'react-router-dom'
 
 export default function DashProfile() {
   const { currentUser, error } = useSelector((state) => state.user);
@@ -10,6 +11,7 @@ export default function DashProfile() {
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [updateLoading, setUpdateLoading] = useState(false);
   const dispatch = useDispatch();
 
   /* Handle input change */
@@ -17,14 +19,16 @@ export default function DashProfile() {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  /* Handle submit button click */
+ /* Handle submit button click */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUpdateUserError(null);
     setUpdateUserSuccess(null);
+    setUpdateLoading(true); 
 
     if (Object.keys(formData).length === 0) {
       setUpdateUserError('No changes made');
+      setUpdateLoading(false);
       return;
     }
 
@@ -40,13 +44,18 @@ export default function DashProfile() {
       if (!res.ok) {
         dispatch(updateFailure(data.message));
         setUpdateUserError(data.message);
-      } else {
+      } 
+      else {
         dispatch(updateSuccess(data));
         setUpdateUserSuccess('Profile updated successfully!');
       }
-    } catch (error) {
+    } 
+    catch (error) {
       dispatch(updateFailure(error.message));
       setUpdateUserError(error.message);
+    } 
+    finally {
+      setUpdateLoading(false);
     }
   };
 
@@ -125,9 +134,37 @@ export default function DashProfile() {
           onChange={handleInputChange}
           className='mt-3 p-2 bg-[#121212] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500'
         />
-        <button type="submit" className="btn-gradient bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:bg-gradient-to-l h-10 rounded">
-          Update
+        <button 
+          type="submit" 
+          disabled={updateLoading}
+          className="btn-gradient bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:bg-gradient-to-l h-10 rounded relative"
+        >
+          {updateLoading ? (
+            <>
+              <span className="opacity-0">Update</span>
+              <span className="absolute inset-0 flex items-center justify-center">
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </span>
+            </>
+          ) : (
+            "Update"
+          )}
         </button>
+        {
+          currentUser.isAdmin && (
+            <Link to="/create-post">
+              <button 
+                type="button" 
+                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l text-white font-medium rounded px-5 py-2.5 text-center mt-4"
+              >
+                Create a post
+              </button>
+            </Link>
+          )
+        }
       </form>
 
       <div className="flex justify-between items-center mt-6 space-x-6">
