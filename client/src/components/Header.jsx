@@ -106,7 +106,7 @@ export default function Header() {
                                 className='w-12 h-12 object-cover cursor-pointer hover:shadow-lg transition'
                             />
                         }
-                        className="bg-surface-2 border border-line rounded-lg shadow-lg w-48"
+                        className="z-[100] bg-surface-2 border border-line rounded-lg shadow-lg w-48"
                     >
                         <Dropdown.Header className="px-4 py-3 bg-raised">
                             <span className='block text-sm font-semibold text-ink'>
