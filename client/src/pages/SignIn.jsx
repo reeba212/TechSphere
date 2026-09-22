@@ -50,7 +50,7 @@ export default function SignIn() {
         {/* Left Side */}
         <div className='flex-1'>
           <Link to="/" className='font-bold text-4xl'>
-            <span className='px-3 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
+            <span className='px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg text-white'>
               TechSphere
             </span>
           </Link>
@@ -92,7 +92,7 @@ export default function SignIn() {
             </div>
             <Button
               type='submit'
-              className='w-full text-white font-bold py-1 px-2 rounded-lg transition-all bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
+              className='w-full text-white font-bold py-1 px-2 rounded-lg transition-all bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600'
               disabled={loading}
             >
               {loading ? (

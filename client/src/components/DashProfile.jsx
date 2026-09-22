@@ -158,7 +158,7 @@ export default function DashProfile() {
             <Link to="/create-post">
               <button 
                 type="button" 
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l text-white font-medium rounded px-5 py-2.5 text-center mt-4"
+                className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:bg-gradient-to-l text-white font-medium rounded px-5 py-2.5 text-center mt-4"
               >
                 Create a post
               </button>
