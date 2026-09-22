@@ -4,6 +4,7 @@ import { updateStart, updateSuccess, updateFailure, deleteUserStart, deleteUserS
 import { Modal } from 'flowbite-react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { Link } from 'react-router-dom'
+import ThemeSwitcher from './ThemeSwitcher';
 
 export default function DashProfile() {
   const { currentUser, error } = useSelector((state) => state.user);
@@ -115,7 +116,7 @@ export default function DashProfile() {
           placeholder='Username'
           defaultValue={currentUser?.username}
           onChange={handleInputChange}
-          className='mt-3 p-2 bg-[#121212] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500'
+          className='input-field mt-3'
           required
         />
         <input
@@ -124,7 +125,7 @@ export default function DashProfile() {
           placeholder='Email'
           defaultValue={currentUser?.email}
           onChange={handleInputChange}
-          className='mt-3 p-2 bg-[#121212] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500'
+          className='input-field mt-3'
           required
         />
         <input
@@ -132,18 +133,14 @@ export default function DashProfile() {
           id='password'
           placeholder='Password (optional)'
           onChange={handleInputChange}
-          className='mt-3 p-2 bg-[#121212] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500'
+          className='input-field mt-3'
         />
-        <button 
-          type="submit" 
-          disabled={updateLoading}
-          className="btn-gradient bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:bg-gradient-to-l h-10 rounded relative"
-        >
+        <button type="submit" disabled={updateLoading} className="btn-primary h-10 relative">
           {updateLoading ? (
             <>
               <span className="opacity-0">Update</span>
               <span className="absolute inset-0 flex items-center justify-center">
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin h-5 w-5 text-canvas" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -156,16 +153,17 @@ export default function DashProfile() {
         {
           currentUser.isAdmin && (
             <Link to="/create-post">
-              <button 
-                type="button" 
-                className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:bg-gradient-to-l text-white font-medium rounded px-5 py-2.5 text-center mt-4"
-              >
+              <button type="button" className="btn-primary w-full mt-4">
                 Create a post
               </button>
             </Link>
           )
         }
       </form>
+
+      <div className="mt-8 border-t border-line pt-6">
+        <ThemeSwitcher />
+      </div>
 
       <div className="flex justify-between items-center mt-6 space-x-6">
         <span onClick={() => setShowModal(true)} className="text-red-500 cursor-pointer hover:text-red-700 font-semibold transition-colors duration-200">
@@ -177,19 +175,19 @@ export default function DashProfile() {
       </div>
 
       {updateUserSuccess && (
-        <div className="alert alert-success mt-5 text-green-500 bg-[#181818] p-2 rounded border border-green-500">
+        <div className="alert alert-success mt-5 text-green-500 bg-surface-2 p-2 rounded border border-green-500">
           {updateUserSuccess}
         </div>
       )}
 
       {updateUserError && (
-        <div className="alert alert-failure mt-5 text-red-500 bg-[#181818] p-2 rounded border border-red-500">
+        <div className="alert alert-failure mt-5 text-red-500 bg-surface-2 p-2 rounded border border-red-500">
           {updateUserError}
         </div>
       )}
 
       {error && error !== 'Unauthorized' && (
-        <div className="alert alert-failure mt-5 text-red-500 bg-[#181818] p-2 rounded border border-red-500">
+        <div className="alert alert-failure mt-5 text-red-500 bg-surface-2 p-2 rounded border border-red-500">
           {error}
         </div>
       )}
@@ -197,12 +195,12 @@ export default function DashProfile() {
       {/* Delete Confirmation Modal */}
       {showModal && (
         <Modal show={showModal} onClose={() => setShowModal(false)} popup size='md'>
-          <div className="bg-[#121212] rounded-lg p-6">
+          <div className="bg-surface rounded-lg p-6">
             <Modal.Header />
             <Modal.Body>
               <div className='text-center'>
-                <HiOutlineExclamationCircle className='h-14 w-14 text-gray-200 mb-4 mx-auto' />
-                <h3 className='mb-5 text-lg text-gray-400'>
+                <HiOutlineExclamationCircle className='h-14 w-14 text-muted mb-4 mx-auto' />
+                <h3 className='mb-5 text-lg text-ink'>
                   Are you sure you want to delete your account?
                 </h3>
                 <div className='flex justify-center gap-4'>
@@ -214,7 +212,7 @@ export default function DashProfile() {
                   </button>
                   <button 
                     onClick={() => setShowModal(false)} 
-                    className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition"
+                    className="bg-surface-2 text-ink px-4 py-2 rounded hover:bg-raised transition"
                   >
                     No, cancel
                   </button>

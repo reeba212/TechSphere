@@ -12,6 +12,7 @@ const postSchema = new mongoose.Schema(
         tags: { type: [String], default: [] },
         published: { type: Boolean, default: false },
         readTimeMins: { type: Number, default: 1 },
+        summary: { type: String, default: '' },
         series: { type: mongoose.Schema.Types.ObjectId, ref: 'Series', default: null },
         seriesOrder: { type: Number, default: null },
     },

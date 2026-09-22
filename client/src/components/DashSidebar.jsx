@@ -40,7 +40,7 @@ export default function DashSidebar() {
   
 
   return (
-    <Sidebar className="h-full w-full md:w-56 bg-[#121212]">
+    <Sidebar className="h-full w-full md:w-56 bg-surface">
       <Sidebar.Items>
         <Sidebar.ItemGroup>
           {/* Profile */}
@@ -49,10 +49,8 @@ export default function DashSidebar() {
             to="/dashboard?tab=profile"
             active={tab === 'profile'}
             icon={HiUser}
-            label="User"
-            labelColor="dark"
-            className={`cursor-pointer text-white hover:text-gray-300 hover:bg-[#181818] transition-colors ${
-              tab === 'profile' ? 'bg-[#202020]' : ''
+            className={`cursor-pointer text-ink hover:text-accent hover:bg-surface-2 transition-colors ${
+              tab === 'profile' ? 'bg-raised' : ''
             }`}
           >
             Profile
@@ -65,8 +63,8 @@ export default function DashSidebar() {
               to="/dashboard?tab=posts"
               active={tab === 'posts'}
               icon={HiDocumentText}
-              className={`cursor-pointer text-white hover:text-gray-300 hover:bg-[#181818] transition-colors ${
-                tab === 'posts' ? 'bg-[#202020]' : ''
+              className={`cursor-pointer text-ink hover:text-accent hover:bg-surface-2 transition-colors ${
+                tab === 'posts' ? 'bg-raised' : ''
               }`}
             >
               Posts
@@ -78,8 +76,8 @@ export default function DashSidebar() {
               to="/dashboard?tab=series"
               active={tab === 'series'}
               icon={HiCollection}
-              className={`cursor-pointer text-white hover:text-gray-300 hover:bg-[#181818] transition-colors ${
-                tab === 'series' ? 'bg-[#202020]' : ''
+              className={`cursor-pointer text-ink hover:text-accent hover:bg-surface-2 transition-colors ${
+                tab === 'series' ? 'bg-raised' : ''
               }`}
             >
               Series
@@ -92,8 +90,8 @@ export default function DashSidebar() {
             to="/dashboard?tab=learning"
             active={tab === 'learning'}
             icon={HiAcademicCap}
-            className={`cursor-pointer text-white hover:text-gray-300 hover:bg-[#181818] transition-colors ${
-              tab === 'learning' ? 'bg-[#202020]' : ''
+            className={`cursor-pointer text-ink hover:text-accent hover:bg-surface-2 transition-colors ${
+              tab === 'learning' ? 'bg-raised' : ''
             }`}
           >
             Continue Learning
@@ -105,8 +103,8 @@ export default function DashSidebar() {
             to="/dashboard?tab=completed"
             active={tab === 'completed'}
             icon={HiCheckCircle}
-            className={`cursor-pointer text-white hover:text-gray-300 hover:bg-[#181818] transition-colors ${
-              tab === 'completed' ? 'bg-[#202020]' : ''
+            className={`cursor-pointer text-ink hover:text-accent hover:bg-surface-2 transition-colors ${
+              tab === 'completed' ? 'bg-raised' : ''
             }`}
           >
             Completed
@@ -118,8 +116,8 @@ export default function DashSidebar() {
             to="/dashboard?tab=saved"
             active={tab === 'saved'}
             icon={HiBookmark}
-            className={`cursor-pointer text-white hover:text-gray-300 hover:bg-[#181818] transition-colors ${
-              tab === 'saved' ? 'bg-[#202020]' : ''
+            className={`cursor-pointer text-ink hover:text-accent hover:bg-surface-2 transition-colors ${
+              tab === 'saved' ? 'bg-raised' : ''
             }`}
           >
             Saved
@@ -128,7 +126,7 @@ export default function DashSidebar() {
           {/* Sign Out */}
           <Sidebar.Item
             icon={HiArrowSmRight}
-            className="cursor-pointer text-white hover:text-gray-300 hover:bg-[#181818] transition-colors"
+            className="cursor-pointer text-ink hover:text-accent hover:bg-surface-2 transition-colors"
             onClick={handleSignOut}
           >
             Sign Out

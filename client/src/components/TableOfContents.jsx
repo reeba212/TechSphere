@@ -25,8 +25,8 @@ export default function TableOfContents({ headings }) {
   const minLevel = Math.min(...headings.map((h) => h.level));
 
   return (
-    <nav aria-label='Table of contents' className='rounded-xl border border-gray-800 bg-[#121212] p-4'>
-      <h2 className='mb-3 text-sm font-semibold uppercase tracking-wide text-gray-400'>On this page</h2>
+    <nav aria-label='Table of contents' className='surface-card p-4'>
+      <h2 className='mb-3 text-sm font-semibold uppercase tracking-wide text-muted'>On this page</h2>
       <ul className='space-y-2 text-sm'>
         {headings.map((h) => (
           <li key={h.id} style={{ paddingLeft: `${(h.level - minLevel) * 12}px` }}>
@@ -37,8 +37,8 @@ export default function TableOfContents({ headings }) {
                 document.getElementById(h.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 setActiveId(h.id);
               }}
-              className={`block transition hover:text-white ${
-                activeId === h.id ? 'font-medium text-purple-300' : 'text-gray-400'
+              className={`block transition hover:text-accent ${
+                activeId === h.id ? 'font-medium text-accent' : 'text-muted'
               }`}
             >
               {h.text}

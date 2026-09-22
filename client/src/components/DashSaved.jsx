@@ -27,8 +27,8 @@ export default function DashSaved() {
     <div className='w-full p-4'>
       <h1 className='mb-6 text-2xl font-semibold'>Saved articles</h1>
       {error && <p className='text-red-300'>{error}</p>}
-      {!result && !error && <p className='text-gray-400'>Loading…</p>}
-      {result?.posts.length === 0 && <p className='py-10 text-center text-gray-400'>No saved articles yet.</p>}
+      {!result && !error && <p className='text-muted'>Loading…</p>}
+      {result?.posts.length === 0 && <p className='py-10 text-center text-muted'>No saved articles yet.</p>}
       {result?.posts.length > 0 && (
         <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
           {result.posts.map((p) => (

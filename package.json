@@ -17,11 +17,15 @@
   "scripts": {
     "test": "node --test \"api/tests/**/*.test.js\"",
     "dev": "nodemon api/index.js",
-    "start": "node api/index.js"
+    "start": "node api/index.js",
+    "dev:worker": "nodemon api/worker.js",
+    "worker": "node api/worker.js"
   },
   "dependencies": {
+    "@google/genai": "^2.24.0",
     "bcryptjs": "^3.0.2",
     "browser-image-compression": "^2.0.2",
+    "bullmq": "^6.3.8",
     "cloudinary": "^2.11.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -29,6 +33,7 @@
     "express": "^4.21.2",
     "flowbite": "^3.1.2",
     "flowbite-react": "^0.10.2",
+    "ioredis": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "mongodb": "^6.14.0",

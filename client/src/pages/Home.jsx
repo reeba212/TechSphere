@@ -19,24 +19,28 @@ export default function Home() {
 
   return (
     <main>
-      <section className='px-4 py-20 text-center'>
-        <h1 className='mx-auto max-w-3xl text-4xl font-bold leading-tight sm:text-6xl'>
-          Learn tech,{' '}
-          <span className='bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent'>
-            one topic at a time
-          </span>
-        </h1>
-        <p className='mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-gray-400'>
-          Real explanations, not surface-level takes. Dig into web development, machine
-          learning, cloud, security and more — written to actually build understanding,
-          one well-structured article at a time.
-        </p>
-        <Link
-          to='/search'
-          className='mt-8 inline-block rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 px-6 py-3 font-semibold transition hover:opacity-90'
-        >
-          Browse all articles
-        </Link>
+      <section className='hero-dots-left px-4 py-20'>
+        <div className='relative z-10 mx-auto grid max-w-6xl gap-10 lg:grid-cols-[auto_1fr] lg:items-center lg:gap-20'>
+          <h1 className='text-4xl leading-tight sm:text-5xl md:text-6xl lg:text-7xl'>
+            <span className='block whitespace-nowrap'>Learn tech.</span>
+            <span className='block whitespace-nowrap'>Build understanding.</span>
+            <span className='block whitespace-nowrap text-accent'>Go deeper.</span>
+          </h1>
+          <div>
+            <p className='max-w-md text-lg leading-relaxed text-muted'>
+              Learn about complex technical concepts, explore curated learning paths, track your
+              progress, test your knowledge, and ask an AI tutor about what you're learning.
+            </p>
+            <div className='mt-8 flex flex-wrap gap-4'>
+              <Link to='/search' className='btn-primary'>
+                Browse all articles
+              </Link>
+              <Link to='/about' className='btn-outline'>
+                About us
+              </Link>
+            </div>
+          </div>
+        </div>
       </section>
 
       {categories.length > 0 && (
@@ -46,7 +50,7 @@ export default function Home() {
               <Link
                 key={c.slug}
                 to={`/category/${c.slug}`}
-                className='rounded-full border border-gray-700 px-4 py-1.5 text-sm text-gray-300 transition hover:border-purple-500 hover:text-white'
+                className='rounded-full border border-line px-4 py-1.5 text-sm text-muted transition hover:border-accent hover:text-accent'
               >
                 {c.name}
               </Link>
@@ -58,13 +62,13 @@ export default function Home() {
       <section className='mx-auto w-full max-w-6xl px-4 py-14'>
         <div className='mb-6 flex items-end justify-between'>
           <h2 className='text-2xl font-semibold'>Latest articles</h2>
-          <Link to='/search' className='text-sm text-purple-300 hover:text-purple-200'>
+          <Link to='/search' className='text-sm text-muted hover:text-accent'>
             View all →
           </Link>
         </div>
         {error && <p className='text-red-300'>{error}</p>}
-        {!posts && !error && <p className='text-gray-400'>Loading…</p>}
-        {posts?.length === 0 && <p className='py-10 text-center text-gray-400'>No articles published yet.</p>}
+        {!posts && !error && <p className='text-muted'>Loading…</p>}
+        {posts?.length === 0 && <p className='py-10 text-center text-muted'>No articles published yet.</p>}
         {posts?.length > 0 && (
           <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
             {posts.map((p) => (

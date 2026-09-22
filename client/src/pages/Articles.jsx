@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { HiChevronDown } from 'react-icons/hi';
 import PostCard from '../components/PostCard';
 import Pagination from '../components/Pagination';
 import { apiFetch, categoryLabel } from '../utils/format';
 
-const selectClass =
-  'p-2.5 bg-[#121212] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 border border-gray-700';
+const inputClass = 'input-field';
+const selectClass = 'input-field appearance-none pr-9';
+
+// A native <select> with its default arrow replaced so we can give it room from the edge.
+function Select({ className = '', ...props }) {
+  return (
+    <div className={`relative ${className}`}>
+      <select {...props} className={`${selectClass} w-full`} />
+      <HiChevronDown className='pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted' />
+    </div>
+  );
+}
 
 /**
  * Serves both /search (all articles + search + filters) and /category/:category.
@@ -90,16 +101,13 @@ export default function Articles() {
     <main className='mx-auto w-full max-w-6xl px-4 py-10'>
       <div className='flex flex-wrap items-start justify-between gap-4'>
         <div>
-          <h1 className='text-3xl font-bold sm:text-4xl'>{heading}</h1>
+          <h1 className='text-3xl sm:text-4xl'>{heading}</h1>
           {categoryParam && (
-            <p className='mt-2 text-gray-400'>{categories.find((c) => c.slug === categoryParam)?.description}</p>
+            <p className='mt-2 text-muted'>{categories.find((c) => c.slug === categoryParam)?.description}</p>
           )}
         </div>
         {currentUser?.isAdmin && (
-          <Link
-            to='/create-post'
-            className='shrink-0 rounded-md bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2 font-semibold hover:opacity-90'
-          >
+          <Link to='/create-post' className='btn-primary shrink-0'>
             Write a post
           </Link>
         )}
@@ -113,45 +121,36 @@ export default function Articles() {
             onChange={(e) => setQueryInput(e.target.value)}
             placeholder='Search articles…'
             aria-label='Search articles'
-            className={`${selectClass} w-full`}
+            className={`${inputClass} w-full`}
           />
-          <button
-            type='submit'
-            className='rounded-md bg-gradient-to-r from-purple-500 to-blue-500 px-5 font-semibold hover:opacity-90'
-          >
+          <button type='submit' className='btn-primary'>
             Search
           </button>
         </form>
         {!categoryParam && (
-          <select
-            value={category}
-            onChange={(e) => update({ category: e.target.value })}
-            aria-label='Category'
-            className={selectClass}
-          >
+          <Select value={category} onChange={(e) => update({ category: e.target.value })} aria-label='Category'>
             <option value=''>All categories</option>
             {categories.map((c) => (
               <option key={c.slug} value={c.slug}>
                 {c.name}
               </option>
             ))}
-          </select>
+          </Select>
         )}
-        <select
+        <Select
           value={sort}
           onChange={(e) => update({ sort: e.target.value === 'newest' ? '' : e.target.value })}
           aria-label='Sort'
-          className={selectClass}
         >
           <option value='newest'>Newest</option>
           <option value='oldest'>Oldest</option>
           {q && <option value='relevance'>Most relevant</option>}
-        </select>
+        </Select>
         {hasActiveFilters && (
           <button
             type='button'
             onClick={clearFilters}
-            className='shrink-0 rounded-md border border-gray-700 px-4 py-2.5 text-sm font-medium text-gray-300 transition hover:border-red-500 hover:text-white'
+            className='shrink-0 rounded-md border border-line px-4 py-2.5 text-sm font-medium text-muted transition hover:border-red-500 hover:text-ink'
           >
             Clear filters
           </button>
@@ -162,7 +161,7 @@ export default function Articles() {
         <button
           type='button'
           onClick={() => update({ tag: '' })}
-          className='mt-3 rounded-full border border-gray-700 px-3 py-1 text-sm text-gray-300 hover:border-red-500'
+          className='mt-3 rounded-full border border-line px-3 py-1 text-sm text-muted hover:border-red-500'
         >
           #{tag} ✕
         </button>
@@ -170,14 +169,14 @@ export default function Articles() {
 
       <div className='mt-8'>
         {error && <p className='text-red-300'>{error}</p>}
-        {loading && !result && <p className='text-gray-400'>Loading…</p>}
+        {loading && !result && <p className='text-muted'>Loading…</p>}
         {result && (
           <>
-            <p className='mb-4 text-sm text-gray-500'>
+            <p className='mb-4 text-sm text-muted'>
               {result.total} {result.total === 1 ? 'article' : 'articles'}
             </p>
             {result.posts.length === 0 ? (
-              <p className='py-16 text-center text-gray-400'>No articles found.</p>
+              <p className='py-16 text-center text-muted'>No articles found.</p>
             ) : (
               <div className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-3 ${loading ? 'opacity-60' : ''}`}>
                 {result.posts.map((p) => (

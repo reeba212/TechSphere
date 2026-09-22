@@ -4,9 +4,17 @@ import Post from '../models/post.model.js';
 import Series from '../models/series.model.js';
 import Progress from '../models/progress.model.js';
 import Bookmark from '../models/bookmark.model.js';
+import Chunk from '../models/chunk.model.js';
 import { uniqueSlug } from '../utils/slug.js';
 import { sanitizeArticleHtml, htmlToText, makeExcerpt, readTimeMins } from '../utils/sanitize.js';
 import { categoryExists } from '../utils/category.js';
+import { enqueuePostJobs } from '../queue/aiQueue.js';
+
+// Never let a queue/Redis hiccup fail the request that publishes a post (DoD:
+// "publishing an article returns immediately"). The worker will just never see the job.
+const enqueueAiJobs = (postId) => {
+    enqueuePostJobs(postId).catch((err) => console.error(`[ai queue] failed to enqueue jobs for post ${postId}:`, err.message));
+};
 
 const LIST_PROJECTION = '-content';
 const AUTHOR_FIELDS = 'username profilePicture';
@@ -39,6 +47,7 @@ export const create = async (req, res, next) => {
             readTimeMins: readTimeMins(content),
             author: req.user.id,
         });
+        if (post.published) enqueueAiJobs(post._id);
         res.status(201).json(post);
     } catch (error) {
         next(error);
@@ -161,6 +170,8 @@ export const update = async (req, res, next) => {
     try {
         const post = await findPostOr404(req.params.postId);
         const body = req.validated.body;
+        const wasPublished = post.published;
+        const contentChanged = body.content !== undefined;
 
         if (body.title !== undefined) post.title = body.title; // slug stays stable so links don't break
         if (body.coverImage !== undefined) post.coverImage = body.coverImage;
@@ -184,6 +195,13 @@ export const update = async (req, res, next) => {
         if (body.excerpt !== undefined) post.excerpt = body.excerpt || makeExcerpt(post.content);
 
         await post.save();
+
+        if (post.published && (contentChanged || !wasPublished)) {
+            enqueueAiJobs(post._id); // (re-)index: newly published, or a published post's content changed
+        } else if (wasPublished && !post.published) {
+            await Chunk.deleteMany({ post: post._id }); // unpublished: drop it from search/RAG immediately
+        }
+
         res.status(200).json(post);
     } catch (error) {
         next(error);
@@ -194,6 +212,7 @@ export const remove = async (req, res, next) => {
     try {
         const post = await findPostOr404(req.params.postId);
         await post.deleteOne();
+        await Chunk.deleteMany({ post: post._id });
         res.status(200).json('Post has been deleted');
     } catch (error) {
         next(error);

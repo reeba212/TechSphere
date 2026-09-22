@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import 'react-quill-new/dist/quill.snow.css';
-import 'highlight.js/styles/github-dark.css';
 
 // `html` must come from prepareArticle() (sanitized, code blocks converted, headings given ids).
 export default function ArticleContent({ html }) {

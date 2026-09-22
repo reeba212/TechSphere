@@ -9,6 +9,8 @@ import uploadRoutes from './routes/upload.route.js';
 import seriesRoutes from './routes/series.route.js';
 import progressRoutes from './routes/progress.route.js';
 import bookmarkRoutes from './routes/bookmark.route.js';
+import aiRoutes from './routes/ai.route.js';
+import searchRoutes from './routes/search.route.js';
 
 // The Express app, with no side effects (no DB connection, no listening) so tests can import it.
 const app = express();
@@ -29,6 +31,8 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/series', seriesRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/bookmarks', bookmarkRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/search', searchRoutes);
 
 app.use((req, res, next) => {
     res.status(404).json({ success: false, statusCode: 404, message: 'Not found' });

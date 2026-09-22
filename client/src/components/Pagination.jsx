@@ -9,7 +9,7 @@ export default function Pagination({ page, pages, onChange }) {
   for (let n = start; n <= Math.min(pages, start + 4); n++) numbers.push(n);
 
   const base = 'min-w-10 rounded-md border px-3 py-2 text-sm transition';
-  const idle = 'border-gray-700 text-gray-300 hover:border-purple-500 hover:text-white';
+  const idle = 'border-line text-muted hover:border-accent hover:text-accent';
 
   return (
     <nav aria-label='Pagination' className='mt-10 flex flex-wrap items-center justify-center gap-2'>
@@ -27,7 +27,7 @@ export default function Pagination({ page, pages, onChange }) {
           type='button'
           aria-current={n === page ? 'page' : undefined}
           onClick={() => onChange(n)}
-          className={`${base} ${n === page ? 'border-purple-500 bg-purple-500/20 text-white' : idle}`}
+          className={`${base} ${n === page ? 'border-accent bg-accent/20 text-ink' : idle}`}
         >
           {n}
         </button>

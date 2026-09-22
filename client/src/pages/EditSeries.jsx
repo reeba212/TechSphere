@@ -15,6 +15,6 @@ export default function EditSeries() {
   }, [slug]);
 
   if (error) return <p className='p-10 text-center text-red-300'>{error}</p>;
-  if (!series) return <p className='p-10 text-center text-gray-400'>Loading…</p>;
+  if (!series) return <p className='p-10 text-center text-muted'>Loading…</p>;
   return <SeriesForm series={series} />;
 }

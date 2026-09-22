@@ -3,6 +3,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
+import BrandMark from '../components/BrandMark';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
@@ -48,86 +49,80 @@ export default function SignUp() {
   
 
   return (
-    <div className='min-h-screen mt-20 bg-[#0A0A0A] text-white'>
+    <div className='min-h-screen mt-20 bg-canvas text-ink'>
       <div className='flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5'>
 
         {/* Left Side */}
         <div className='flex-1'>
-          <Link to="/" className='font-bold text-4xl'>
-            <span className='px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg text-white'>
-              TechSphere
-            </span>
+          <Link to="/">
+            <BrandMark size='lg' />
           </Link>
-          <p className='text-sm mt-5 text-gray-400'>
-            Join a community where innovation meets collaboration. At TechSphere, 
+          <p className='text-sm mt-5 text-muted'>
+            Join a community where innovation meets collaboration. At TechSphere,
             we empower tech enthusiasts, developers, and innovators to connect, learn,
-            and build the future together. Sign up today and dive into a world of 
-            opportunities — whether you’re here to sharpen your skills, explore new 
+            and build the future together. Sign up today and dive into a world of
+            opportunities — whether you’re here to sharpen your skills, explore new
             technologies, or share your passion with like-minded individuals.
           </p>
         </div>
 
         {/* Right Side */}
         <div className='flex-1'>
-          <form className='flex flex-col gap-6 bg-[#1A1A1A] p-6 rounded-lg shadow-lg border border-gray-800' onSubmit={handleSubmit}>
+          <form className='flex flex-col gap-6 bg-surface p-6 rounded-lg shadow-lg border border-line' onSubmit={handleSubmit}>
             <div>
-              <Label className='text-lg font-semibold text-gray-300' htmlFor='username'>
+              <Label className='text-lg font-semibold text-muted' htmlFor='username'>
                 Your Username
               </Label>
               <input
                 type='text'
                 placeholder='Username'
                 id='username'
-                className='focus:outline-none w-full border border-gray-700 rounded-lg focus:ring-0 focus:border-purple-500 text-sm px-4 py-3 mt-1 bg-white text-black placeholder-gray-500'
+                className='input-field mt-1'
                 onChange={handleChange}
               />
             </div>
             <div>
-              <Label className='text-lg font-semibold text-gray-300' htmlFor='email'>
+              <Label className='text-lg font-semibold text-muted' htmlFor='email'>
                 Your Email
               </Label>
               <input
                 type='email'
                 placeholder='name@company.com'
                 id='email'
-                className='focus:outline-none w-full border border-gray-700 rounded-lg focus:ring-0 focus:border-purple-500 text-sm px-4 py-3 mt-1 bg-white text-black placeholder-gray-500'
+                className='input-field mt-1'
                 onChange={handleChange}
               />
             </div>
             <div>
-              <Label className='text-lg font-semibold text-gray-300' htmlFor='password'>
+              <Label className='text-lg font-semibold text-muted' htmlFor='password'>
                 Your Password
               </Label>
               <input
                 type='password'
                 placeholder='Password'
                 id='password'
-                className='focus:outline-none w-full border border-gray-700 rounded-lg focus:ring-0 focus:border-purple-500 text-sm px-4 py-3 mt-1 bg-white text-black placeholder-gray-500'
+                className='input-field mt-1'
                 onChange={handleChange}
               />
             </div>
-            <Button
-              type='submit'
-              className='w-full text-white font-bold py-1 px-2 rounded-lg transition-all bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600'
-              disabled={loading}
-            >
+            <Button type='submit' className='btn-primary w-full py-1' disabled={loading}>
               {
               loading ? (
                 <>
-                <div className="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></div>
+                <div className="animate-spin h-5 w-5 border-4 border-canvas border-t-transparent rounded-full"></div>
                 <span className='pl-3'>Loading...</span>
                 </>
-              ) : 'Sign Up' 
+              ) : 'Sign Up'
             }
             </Button>
             <OAuth/>
           </form>
 
-          <div className='flex gap-2 text-sm mt-5 text-gray-400'>
+          <div className='flex gap-2 text-sm mt-5 text-muted'>
             <span>
               Have an account?
             </span>
-            <Link to='/sign-in' className='text-blue-400 hover:text-blue-300'>
+            <Link to='/sign-in' className='text-ink underline hover:text-accent'>
               Sign In
             </Link>
           </div>

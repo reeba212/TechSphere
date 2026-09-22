@@ -15,8 +15,7 @@ const toolbarOptions = [
   ['clean'],
 ];
 
-const inputClass =
-  'w-full p-2.5 bg-[#121212] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 border border-gray-700';
+const inputClass = 'input-field';
 
 const uploadImage = async (file) => {
   const formData = new FormData();
@@ -158,7 +157,7 @@ export default function PostForm({ post }) {
           className={inputClass}
         />
 
-        <div className='flex flex-col gap-3 rounded-lg border-2 border-dashed border-gray-700 bg-[#121212] p-4'>
+        <div className='flex flex-col gap-3 rounded-lg border-2 border-dashed border-line bg-surface p-4'>
           <div className='flex flex-col sm:flex-row gap-4 items-center justify-between'>
             <div>
               <input
@@ -168,20 +167,12 @@ export default function PostForm({ post }) {
                 className='hidden'
                 onChange={(e) => setCoverFile(e.target.files?.[0] || null)}
               />
-              <label
-                htmlFor='fileUpload'
-                className='cursor-pointer px-4 py-2 bg-[#181818] outline hover:bg-[#303030] text-white font-semibold rounded-md'
-              >
+              <label htmlFor='fileUpload' className='btn-secondary cursor-pointer'>
                 Choose cover image
               </label>
-              <span className='p-2 bg-transparent text-white'>{coverFile ? coverFile.name : 'No file chosen'}</span>
+              <span className='p-2 bg-transparent text-ink'>{coverFile ? coverFile.name : 'No file chosen'}</span>
             </div>
-            <button
-              type='button'
-              onClick={handleCoverUpload}
-              disabled={!coverFile || uploading}
-              className='px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:bg-gradient-to-l text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50'
-            >
+            <button type='button' onClick={handleCoverUpload} disabled={!coverFile || uploading} className='btn-primary'>
               {uploading ? 'Uploading…' : 'Upload Image'}
             </button>
           </div>
@@ -191,7 +182,7 @@ export default function PostForm({ post }) {
               <button
                 type='button'
                 onClick={() => setCoverImage('')}
-                className='absolute top-2 right-2 rounded-md bg-black/70 px-3 py-1 text-sm text-white hover:bg-red-600'
+                className='absolute top-2 right-2 rounded-md bg-black/70 px-3 py-1 text-sm text-ink hover:bg-red-600'
               >
                 Remove
               </button>
@@ -208,19 +199,10 @@ export default function PostForm({ post }) {
         )}
 
         <div className='flex flex-col sm:flex-row gap-3'>
-          <button
-            type='button'
-            disabled={saving}
-            onClick={() => save(false)}
-            className='px-4 py-2 border border-gray-600 text-white font-semibold rounded-md hover:bg-[#202020] focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 sm:w-48'
-          >
+          <button type='button' disabled={saving} onClick={() => save(false)} className='btn-secondary sm:w-48'>
             Save as draft
           </button>
-          <button
-            type='submit'
-            disabled={saving}
-            className='px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold rounded-md hover:from-blue-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 sm:w-48'
-          >
+          <button type='submit' disabled={saving} className='btn-primary sm:w-48'>
             {saving ? 'Saving…' : post?.published ? 'Update & keep published' : 'Publish'}
           </button>
         </div>

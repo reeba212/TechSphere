@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiFetch } from '../utils/format';
 
-const inputClass =
-  'w-full p-2.5 bg-[#121212] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 border border-gray-700';
+const inputClass = 'input-field';
 
 /**
  * Shared by Create Series and Edit Series. Pass `series` (from GET /api/series/:slug,
@@ -116,7 +115,7 @@ export default function SeriesForm({ series }) {
           onChange={(e) => setDescription(e.target.value)}
           className={inputClass}
         />
-        <label className='flex items-center gap-2 text-sm text-gray-300'>
+        <label className='flex items-center gap-2 text-sm text-muted'>
           <input type='checkbox' checked={published} onChange={(e) => setPublished(e.target.checked)} />
           Published
         </label>
@@ -131,32 +130,32 @@ export default function SeriesForm({ series }) {
           type='button'
           disabled={saving || title.trim().length < 3}
           onClick={save}
-          className='w-48 rounded-md bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2 font-semibold hover:opacity-90 disabled:opacity-50'
+          className='btn-primary w-48'
         >
           {saving ? 'Saving…' : series ? 'Save changes' : 'Create series'}
         </button>
       </div>
 
       {series && (
-        <div className='mt-10 border-t border-gray-800 pt-8'>
+        <div className='mt-10 border-t border-line pt-8'>
           <h2 className='mb-4 text-xl font-semibold'>
-            Posts in this series {savingMembers && <span className='text-sm font-normal text-gray-500'>(saving…)</span>}
+            Posts in this series {savingMembers && <span className='text-sm font-normal text-muted'>(saving…)</span>}
           </h2>
 
-          {memberIds.length === 0 && <p className='mb-4 text-gray-400'>No posts yet — add some below.</p>}
+          {memberIds.length === 0 && <p className='mb-4 text-muted'>No posts yet — add some below.</p>}
           {memberIds.length > 0 && (
             <ol className='flex flex-col gap-2'>
               {memberIds.map((id, i) => {
                 const post = postById(id);
                 return (
-                  <li key={id} className='flex items-center gap-3 rounded-md border border-gray-800 bg-[#121212] p-3'>
-                    <span className='w-6 shrink-0 text-center text-sm text-gray-500'>{i + 1}</span>
+                  <li key={id} className='surface-card flex items-center gap-3 p-3'>
+                    <span className='w-6 shrink-0 text-center text-sm text-muted'>{i + 1}</span>
                     <span className='min-w-0 flex-1 truncate'>{post?.title || id}</span>
                     <button
                       type='button'
                       onClick={() => move(i, -1)}
                       disabled={i === 0}
-                      className='text-gray-400 hover:text-white disabled:opacity-30'
+                      className='text-muted hover:text-ink disabled:opacity-30'
                     >
                       ↑
                     </button>
@@ -164,7 +163,7 @@ export default function SeriesForm({ series }) {
                       type='button'
                       onClick={() => move(i, 1)}
                       disabled={i === memberIds.length - 1}
-                      className='text-gray-400 hover:text-white disabled:opacity-30'
+                      className='text-muted hover:text-ink disabled:opacity-30'
                     >
                       ↓
                     </button>

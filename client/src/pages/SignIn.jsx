@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { signInStart, signInSuccess, signInFailure } from '../features/userSlice';
 import OAuth from '../components/OAuth';
+import BrandMark from '../components/BrandMark';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
@@ -45,16 +46,14 @@ export default function SignIn() {
   };
 
   return (
-    <div className='min-h-screen mt-20 bg-[#0A0A0A] text-white'>
+    <div className='min-h-screen mt-20 bg-canvas text-ink'>
       <div className='flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5'>
         {/* Left Side */}
         <div className='flex-1'>
-          <Link to="/" className='font-bold text-4xl'>
-            <span className='px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg text-white'>
-              TechSphere
-            </span>
+          <Link to="/">
+            <BrandMark size='lg' />
           </Link>
-          <p className='text-sm mt-5 text-gray-400'>
+          <p className='text-sm mt-5 text-muted'>
             Welcome back to TechSphere — your hub for innovation and collaboration.
             Sign in with your email and password or use Google for a quicker, seamless experience.
             Reconnect with a community of tech enthusiasts, developers, and innovators.
@@ -65,39 +64,35 @@ export default function SignIn() {
 
         {/* Right Side */}
         <div className='flex-1'>
-          <form className='flex flex-col gap-6 bg-[#1A1A1A] p-6 rounded-lg shadow-lg border border-gray-800' onSubmit={handleSubmit}>
+          <form className='flex flex-col gap-6 bg-surface p-6 rounded-lg shadow-lg border border-line' onSubmit={handleSubmit}>
             <div>
-              <Label className='text-lg font-semibold text-gray-300' htmlFor='email'>
+              <Label className='text-lg font-semibold text-muted' htmlFor='email'>
                 Your Email
               </Label>
               <input
                 type='email'
                 placeholder='name@company.com'
                 id='email'
-                className='focus:outline-none w-full border border-gray-700 rounded-lg focus:ring-0 focus:border-purple-500 text-sm px-4 py-3 mt-1 bg-[#0A0A0A] text-white placeholder-gray-500'
+                className='input-field mt-1'
                 onChange={handleChange}
               />
             </div>
             <div>
-              <Label className='text-lg font-semibold text-gray-300' htmlFor='password'>
+              <Label className='text-lg font-semibold text-muted' htmlFor='password'>
                 Your Password
               </Label>
               <input
                 type='password'
                 placeholder='********'
                 id='password'
-                className='focus:outline-none w-full border border-gray-700 rounded-lg focus:ring-0 focus:border-purple-500 text-sm px-4 py-3 mt-1 bg-[#0A0A0A] text-white placeholder-gray-500'
+                className='input-field mt-1'
                 onChange={handleChange}
               />
             </div>
-            <Button
-              type='submit'
-              className='w-full text-white font-bold py-1 px-2 rounded-lg transition-all bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600'
-              disabled={loading}
-            >
+            <Button type='submit' className='btn-primary w-full py-1' disabled={loading}>
               {loading ? (
                 <div className="flex items-center justify-center">
-                  <div className="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></div>
+                  <div className="animate-spin h-5 w-5 border-4 border-canvas border-t-transparent rounded-full"></div>
                   <span className='pl-3'>Loading...</span>
                 </div>
               ) : (
@@ -107,9 +102,9 @@ export default function SignIn() {
             <OAuth/>
           </form>
 
-          <div className='flex gap-2 text-sm mt-5 text-gray-400'>
+          <div className='flex gap-2 text-sm mt-5 text-muted'>
             <span>Don't have an account?</span>
-            <Link to='/sign-up' className='text-blue-400 hover:text-blue-300'>
+            <Link to='/sign-up' className='text-ink underline hover:text-accent'>
               Sign Up
             </Link>
           </div>

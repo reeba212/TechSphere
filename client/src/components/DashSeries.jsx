@@ -51,22 +51,19 @@ export default function DashSeries() {
     <div className='w-full p-4'>
       <div className='mb-6 flex items-center justify-between'>
         <h1 className='text-2xl font-semibold'>Series</h1>
-        <Link
-          to='/create-series'
-          className='rounded-md bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-2 font-semibold hover:opacity-90'
-        >
+        <Link to='/create-series' className='btn-primary'>
           New series
         </Link>
       </div>
 
       {error && <p className='mb-4 text-red-300'>{error}</p>}
-      {!result && !error && <p className='text-gray-400'>Loading…</p>}
-      {result?.series.length === 0 && <p className='py-10 text-center text-gray-400'>No series yet.</p>}
+      {!result && !error && <p className='text-muted'>Loading…</p>}
+      {result?.series.length === 0 && <p className='py-10 text-center text-muted'>No series yet.</p>}
 
       {result?.series.length > 0 && (
-        <div className='overflow-x-auto rounded-xl border border-gray-800'>
+        <div className='overflow-x-auto rounded-xl border border-line'>
           <table className='w-full text-left text-sm'>
-            <thead className='bg-[#181818] text-xs uppercase text-gray-400'>
+            <thead className='bg-surface-2 text-xs uppercase text-muted'>
               <tr>
                 <th className='px-4 py-3'>Title</th>
                 <th className='px-4 py-3'>Category</th>
@@ -77,32 +74,32 @@ export default function DashSeries() {
             </thead>
             <tbody>
               {result.series.map((series) => (
-                <tr key={series._id} className='border-t border-gray-800 bg-[#121212]'>
+                <tr key={series._id} className='border-t border-line bg-surface'>
                   <td className='max-w-xs px-4 py-3'>
-                    <Link to={`/series/${series.slug}`} className='font-medium hover:text-purple-300'>
+                    <Link to={`/series/${series.slug}`} className='font-medium hover:text-accent'>
                       {series.title}
                     </Link>
                   </td>
-                  <td className='px-4 py-3 text-gray-400'>{categoryLabel(series.category)}</td>
+                  <td className='px-4 py-3 text-muted'>{categoryLabel(series.category)}</td>
                   <td className='px-4 py-3'>
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        series.published ? 'bg-green-500/20 text-green-300' : 'bg-yellow-500/20 text-yellow-300'
+                        series.published ? 'bg-success/20 text-success' : 'bg-warn/20 text-warn'
                       }`}
                     >
                       {series.published ? 'Published' : 'Draft'}
                     </span>
                   </td>
-                  <td className='whitespace-nowrap px-4 py-3 text-gray-400'>{formatDate(series.createdAt)}</td>
+                  <td className='whitespace-nowrap px-4 py-3 text-muted'>{formatDate(series.createdAt)}</td>
                   <td className='whitespace-nowrap px-4 py-3 text-right'>
                     <button
                       type='button'
                       onClick={() => togglePublished(series)}
-                      className='mr-3 text-gray-300 hover:text-white'
+                      className='mr-3 text-muted hover:text-accent'
                     >
                       {series.published ? 'Unpublish' : 'Publish'}
                     </button>
-                    <Link to={`/edit-series/${series.slug}`} className='mr-3 text-purple-300 hover:text-purple-200'>
+                    <Link to={`/edit-series/${series.slug}`} className='mr-3 text-muted underline hover:text-accent'>
                       Edit
                     </Link>
                     <button type='button' onClick={() => remove(series)} className='text-red-400 hover:text-red-300'>
