@@ -13,6 +13,10 @@ import CreatePost from './pages/CreatePost'
 import EditPost from './pages/EditPost'
 import PostPage from './pages/PostPage'
 import Articles from './pages/Articles'
+import Series from './pages/Series'
+import SeriesPage from './pages/SeriesPage'
+import CreateSeries from './pages/CreateSeries'
+import EditSeries from './pages/EditSeries'
 import NotFound from './pages/NotFound'
 
 export default function App() {
@@ -29,12 +33,16 @@ export default function App() {
         <Route element={<AdminPrivateRoute />}>
           <Route path='/create-post' element={<CreatePost/>} />
           <Route path='/edit-post/:slug' element={<EditPost/>} />
+          <Route path='/create-series' element={<CreateSeries/>} />
+          <Route path='/edit-series/:slug' element={<EditSeries/>} />
         </Route>
         <Route path='/sign-in' element={<SignIn/>} />
         <Route path='/sign-up' element={<SignUp/>} />
         <Route path='/search' element={<Articles/>} />
         <Route path='/category/:category' element={<Articles/>} />
         <Route path='/post/:slug' element={<PostPage/>} />
+        <Route path='/series' element={<Series/>} />
+        <Route path='/series/:slug' element={<SeriesPage/>} />
         <Route path='*' element={<NotFound/>} />
       </Routes>
     </div>

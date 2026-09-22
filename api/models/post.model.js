@@ -12,6 +12,8 @@ const postSchema = new mongoose.Schema(
         tags: { type: [String], default: [] },
         published: { type: Boolean, default: false },
         readTimeMins: { type: Number, default: 1 },
+        series: { type: mongoose.Schema.Types.ObjectId, ref: 'Series', default: null },
+        seriesOrder: { type: Number, default: null },
     },
     { timestamps: true }
 );
@@ -19,6 +21,7 @@ const postSchema = new mongoose.Schema(
 postSchema.index({ published: 1, createdAt: -1 });
 postSchema.index({ category: 1, published: 1, createdAt: -1 });
 postSchema.index({ tags: 1 });
+postSchema.index({ series: 1, seriesOrder: 1 });
 postSchema.index(
     { title: 'text', tags: 'text', excerpt: 'text', content: 'text' },
     { weights: { title: 10, tags: 5, excerpt: 3, content: 1 }, name: 'post_text' }

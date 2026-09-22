@@ -3,6 +3,10 @@ import { useLocation } from 'react-router-dom';
 import DashProfile from '../components/DashProfile';
 import DashSidebar from '../components/DashSidebar';
 import DashPosts from '../components/DashPosts';
+import DashSeries from '../components/DashSeries';
+import DashContinueLearning from '../components/DashContinueLearning';
+import DashCompleted from '../components/DashCompleted';
+import DashSaved from '../components/DashSaved';
 import { useSelector } from 'react-redux';
 
 export default function Dashboard() {
@@ -26,8 +30,13 @@ export default function Dashboard() {
       </div>
       {/* profile... */}
         {tab === 'profile' && <DashProfile />}
-      {/* posts (admin only) */}
+      {/* posts and series (admin only) */}
         {tab === 'posts' && currentUser?.isAdmin && <DashPosts />}
+        {tab === 'series' && currentUser?.isAdmin && <DashSeries />}
+      {/* reader learning tabs */}
+        {tab === 'learning' && <DashContinueLearning />}
+        {tab === 'completed' && <DashCompleted />}
+        {tab === 'saved' && <DashSaved />}
     </div>
   )
 }

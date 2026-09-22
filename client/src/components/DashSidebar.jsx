@@ -1,5 +1,5 @@
 import { Sidebar } from 'flowbite-react';
-import { HiArrowSmRight, HiUser, HiDocumentText } from 'react-icons/hi';
+import { HiArrowSmRight, HiUser, HiDocumentText, HiCollection, HiAcademicCap, HiCheckCircle, HiBookmark } from 'react-icons/hi';
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -58,7 +58,7 @@ export default function DashSidebar() {
             Profile
           </Sidebar.Item>
 
-          {/* Posts (admin only) */}
+          {/* Posts and series (admin only) */}
           {currentUser?.isAdmin && (
             <Sidebar.Item
               as={Link}
@@ -72,6 +72,58 @@ export default function DashSidebar() {
               Posts
             </Sidebar.Item>
           )}
+          {currentUser?.isAdmin && (
+            <Sidebar.Item
+              as={Link}
+              to="/dashboard?tab=series"
+              active={tab === 'series'}
+              icon={HiCollection}
+              className={`cursor-pointer text-white hover:text-gray-300 hover:bg-[#181818] transition-colors ${
+                tab === 'series' ? 'bg-[#202020]' : ''
+              }`}
+            >
+              Series
+            </Sidebar.Item>
+          )}
+
+          {/* Continue learning */}
+          <Sidebar.Item
+            as={Link}
+            to="/dashboard?tab=learning"
+            active={tab === 'learning'}
+            icon={HiAcademicCap}
+            className={`cursor-pointer text-white hover:text-gray-300 hover:bg-[#181818] transition-colors ${
+              tab === 'learning' ? 'bg-[#202020]' : ''
+            }`}
+          >
+            Continue Learning
+          </Sidebar.Item>
+
+          {/* Completed */}
+          <Sidebar.Item
+            as={Link}
+            to="/dashboard?tab=completed"
+            active={tab === 'completed'}
+            icon={HiCheckCircle}
+            className={`cursor-pointer text-white hover:text-gray-300 hover:bg-[#181818] transition-colors ${
+              tab === 'completed' ? 'bg-[#202020]' : ''
+            }`}
+          >
+            Completed
+          </Sidebar.Item>
+
+          {/* Saved */}
+          <Sidebar.Item
+            as={Link}
+            to="/dashboard?tab=saved"
+            active={tab === 'saved'}
+            icon={HiBookmark}
+            className={`cursor-pointer text-white hover:text-gray-300 hover:bg-[#181818] transition-colors ${
+              tab === 'saved' ? 'bg-[#202020]' : ''
+            }`}
+          >
+            Saved
+          </Sidebar.Item>
 
           {/* Sign Out */}
           <Sidebar.Item

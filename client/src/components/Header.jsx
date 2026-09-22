@@ -8,6 +8,7 @@ import { signoutSuccess } from '../features/userSlice';
 const NAV_LINKS = [
     { to: '/', label: 'Home' },
     { to: '/search', label: 'Articles' },
+    { to: '/series', label: 'Learning Paths' },
     { to: '/about', label: 'About' },
 ];
 

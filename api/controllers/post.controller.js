@@ -1,17 +1,18 @@
 import mongoose from 'mongoose';
 import { errorHandler } from '../utils/error.js';
 import Post from '../models/post.model.js';
-import Category from '../models/category.model.js';
+import Series from '../models/series.model.js';
+import Progress from '../models/progress.model.js';
+import Bookmark from '../models/bookmark.model.js';
 import { uniqueSlug } from '../utils/slug.js';
 import { sanitizeArticleHtml, htmlToText, makeExcerpt, readTimeMins } from '../utils/sanitize.js';
+import { categoryExists } from '../utils/category.js';
 
 const LIST_PROJECTION = '-content';
 const AUTHOR_FIELDS = 'username profilePicture';
+const SERIES_POST_FIELDS = 'title slug seriesOrder';
 
 const hasVisibleContent = (html) => htmlToText(html).length > 0 || /<img\s/i.test(html);
-
-const categoryExists = async (slug) =>
-    slug === 'uncategorized' || (await Category.exists({ slug }));
 
 export const create = async (req, res, next) => {
     try {
@@ -81,13 +82,47 @@ export const list = async (req, res, next) => {
     }
 };
 
+// Resolves the previous/next article in the post's series, if any (for reader navigation).
+const getSeriesContext = async (post, isAdmin) => {
+    if (!post.series) return undefined;
+    const filter = { series: post.series, ...(isAdmin ? {} : { published: true }) };
+    const [series, siblings] = await Promise.all([
+        Series.findById(post.series, 'title slug'),
+        Post.find(filter, SERIES_POST_FIELDS).sort({ seriesOrder: 1 }),
+    ]);
+    if (!series) return undefined;
+    const index = siblings.findIndex((p) => p._id.equals(post._id));
+    return {
+        series,
+        position: index + 1,
+        total: siblings.length,
+        prev: index > 0 ? siblings[index - 1] : null,
+        next: index !== -1 && index < siblings.length - 1 ? siblings[index + 1] : null,
+    };
+};
+
 export const getBySlug = async (req, res, next) => {
     try {
         const post = await Post.findOne({ slug: req.params.slug }).populate('author', AUTHOR_FIELDS);
         if (!post || (!post.published && !req.user?.isAdmin)) {
             return next(errorHandler(404, 'Post not found'));
         }
-        res.status(200).json(post);
+
+        const result = post.toObject();
+
+        const seriesContext = await getSeriesContext(post, Boolean(req.user?.isAdmin));
+        if (seriesContext) result.seriesContext = seriesContext;
+
+        if (req.user) {
+            const [progress, bookmarked] = await Promise.all([
+                Progress.findOne({ user: req.user.id, post: post._id }, 'progressPercentage completed lastReadPosition'),
+                Bookmark.exists({ user: req.user.id, post: post._id }),
+            ]);
+            result.progress = progress || null;
+            result.bookmarked = Boolean(bookmarked);
+        }
+
+        res.status(200).json(result);
     } catch (error) {
         next(error);
     }
