@@ -1,47 +1,40 @@
 import { GoogleGenAI } from '@google/genai';
 
-// Single point of contact with the LLM provider (D1). Swapping providers means
-// changing this file only. All calls are retried with backoff on transient
-// errors (429/5xx) and logged with token usage for basic cost visibility.
+// Single point of contact with LLM providers (D1). generate() round-robins across
+// GEN_PROVIDERS and falls back through the rest on a 429 (D28), so no single provider's
+// free-tier cap is the ceiling. Embeddings stay on Gemini alone — mixing embedding models
+// would put incompatible vectors in the same Atlas Vector Search index.
 
-const GEN_MODEL = process.env.GEMINI_GEN_MODEL || 'gemini-3.6-flash';
+const GEMINI_GEN_MODEL = process.env.GEMINI_GEN_MODEL || 'gemini-3.6-flash';
 const EMBED_MODEL = process.env.GEMINI_EMBED_MODEL || 'gemini-embedding-001';
+const GROQ_GEN_MODEL = process.env.GROQ_GEN_MODEL || 'openai/gpt-oss-20b';
 export const EMBEDDING_DIMENSIONS = 768;
 
 const TIMEOUT_MS = 20_000;
 const MAX_RETRIES = 3;
 const RETRY_BASE_MS = 1000;
 
-let client = null;
-const getClient = () => {
-    if (!client) {
+let geminiClient = null;
+const getGeminiClient = () => {
+    if (!geminiClient) {
         if (!process.env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY is not set');
-        client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     }
-    return client;
+    return geminiClient;
 };
 
-// ApiError.message is JSON.stringify(errorBody) (@google/genai's throwErrorIfNotOK).
-const parseApiErrorBody = (err) => {
-    try {
-        return JSON.parse(err?.message);
-    } catch {
-        return null;
-    }
+const logUsage = (provider, model, promptTokens, outputTokens) => {
+    if (promptTokens == null && outputTokens == null) return;
+    console.log(JSON.stringify({ event: 'ai_usage', provider, model, promptTokens, outputTokens }));
 };
 
-// A per-day quota won't recover within our backoff window, so retrying just wastes the cap.
-export const isDailyQuotaExhausted = (err) => {
-    const body = parseApiErrorBody(err);
-    if (body?.error?.status !== 'RESOURCE_EXHAUSTED') return false;
-    const violations = body.error.details?.flatMap((d) => d.violations || []) || [];
-    return violations.some((v) => /PerDay/i.test(v.quotaId || ''));
-};
+export const isRateLimited = (err) => (err?.status ?? err?.code) === 429;
 
+// A 429 is never retried in place — round-robin to the next provider is strictly faster
+// than backing off, and doesn't waste calls against a quota that won't recover in seconds.
 const isRetryable = (err) => {
-    if (isDailyQuotaExhausted(err)) return false;
     const status = err?.status ?? err?.code;
-    return status === 429 || (typeof status === 'number' && status >= 500);
+    return typeof status === 'number' && status >= 500;
 };
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -67,32 +60,80 @@ const withRetry = async (label, fn) => {
     throw lastErr;
 };
 
-// A plain (mutable) object, not named exports, so tests can `mock.method(aiClient, 'generate', ...)`.
-export const aiClient = {
-    // generate({ prompt, system }) -> plain text response.
-    generate: async ({ prompt, system }) => {
-        const response = await withRetry('generate', async () =>
-            getClient().models.generateContent({
-                model: GEN_MODEL,
+// Each provider takes ({ prompt, system }, signal) and returns plain text.
+const GEN_PROVIDERS = [
+    {
+        name: 'gemini',
+        generate: async ({ prompt, system }) => {
+            const response = await getGeminiClient().models.generateContent({
+                model: GEMINI_GEN_MODEL,
                 contents: prompt,
                 config: system ? { systemInstruction: system } : undefined,
-            })
-        );
-        const usage = response.usageMetadata;
-        if (usage) {
-            console.log(JSON.stringify({
-                event: 'ai_usage', model: GEN_MODEL,
-                promptTokens: usage.promptTokenCount, outputTokens: usage.candidatesTokenCount,
-            }));
-        }
-        return (response.text || '').trim();
+            });
+            const usage = response.usageMetadata;
+            logUsage('gemini', GEMINI_GEN_MODEL, usage?.promptTokenCount, usage?.candidatesTokenCount);
+            return (response.text || '').trim();
+        },
     },
+    {
+        name: 'groq',
+        generate: async ({ prompt, system }, signal) => {
+            if (!process.env.GROQ_API_KEY) throw new Error('GROQ_API_KEY is not set');
+            const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                signal,
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+                },
+                body: JSON.stringify({
+                    model: GROQ_GEN_MODEL,
+                    messages: [
+                        ...(system ? [{ role: 'system', content: system }] : []),
+                        { role: 'user', content: prompt },
+                    ],
+                }),
+            });
+            if (!res.ok) {
+                const body = await res.json().catch(() => null);
+                const err = new Error(body?.error?.message || `Groq request failed (${res.status})`);
+                err.status = res.status;
+                throw err;
+            }
+            const data = await res.json();
+            logUsage('groq', GROQ_GEN_MODEL, data.usage?.prompt_tokens, data.usage?.completion_tokens);
+            return (data.choices?.[0]?.message?.content || '').trim();
+        },
+    },
+];
+
+let ringCursor = 0;
+
+const generateWithRing = async ({ prompt, system }) => {
+    const order = GEN_PROVIDERS.map((_, i) => GEN_PROVIDERS[(ringCursor + i) % GEN_PROVIDERS.length]);
+    ringCursor = (ringCursor + 1) % GEN_PROVIDERS.length;
+
+    let lastErr;
+    for (const provider of order) {
+        try {
+            return await withRetry(`generate:${provider.name}`, (signal) => provider.generate({ prompt, system }, signal));
+        } catch (err) {
+            lastErr = err;
+            if (!isRateLimited(err)) throw err; // a real error — don't mask it by trying another provider
+        }
+    }
+    throw lastErr; // every provider is rate-limited
+};
+
+// A plain (mutable) object, not named exports, so tests can `mock.method(aiClient, 'generate', ...)`.
+export const aiClient = {
+    generate: generateWithRing,
 
     // embedBatch(texts) -> array of number[] (one embedding per input text, same order).
     embedBatch: async (texts) => {
         if (texts.length === 0) return [];
         const response = await withRetry('embed', async () =>
-            getClient().models.embedContent({
+            getGeminiClient().models.embedContent({
                 model: EMBED_MODEL,
                 contents: texts,
                 config: { outputDimensionality: EMBEDDING_DIMENSIONS },

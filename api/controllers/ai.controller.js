@@ -2,17 +2,18 @@ import mongoose from 'mongoose';
 import { errorHandler } from '../utils/error.js';
 import Post from '../models/post.model.js';
 import Chunk from '../models/chunk.model.js';
-import { aiClient, isDailyQuotaExhausted } from '../utils/aiClient.js';
+import { aiClient, isRateLimited } from '../utils/aiClient.js';
 import { htmlToText } from '../utils/sanitize.js';
 import { EXPLAIN_MODES } from '../validators/ai.validator.js';
 
 const VECTOR_INDEX = 'chunk_vector_index';
 const MIN_SCORE = 0.6; // cosine similarity below this = "not relevant enough" (guardrail)
 
-// Swaps the raw Gemini error blob for a message a reader can actually parse.
+// Swaps the raw provider error blob for a message a reader can actually parse.
+// Only reached once every provider in the round-robin ring has rate-limited (aiClient.js).
 const forwardAiError = (error, next) => {
-    if (isDailyQuotaExhausted(error)) {
-        return next(errorHandler(503, "TechSphere's AI features have hit their daily usage limit. Please try again later."));
+    if (isRateLimited(error)) {
+        return next(errorHandler(503, "TechSphere's AI features are temporarily rate-limited across all providers. Please try again shortly."));
     }
     next(error);
 };
